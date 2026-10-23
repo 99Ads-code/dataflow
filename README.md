@@ -40,7 +40,7 @@ Requer **Node.js 18 ou superior** (https://nodejs.org, versão LTS). Não há `n
 2. No Windows, dê dois cliques em **`index.bat`**. Ele abre http://localhost:3737. Manualmente: `node server.js`.
 3. Entre com Google. As abas `Usuarios` e `99 Ads Tag Request` são criadas automaticamente se não existirem.
 
-Planilha usada: `1_fpbcB6q1dRcCvAdjqeLJY1s3rsdBMFTcTvOxvB_j64` (variável `SPREADSHEET_ID`). Os pedidos vão para a aba `99 Ads Tag Request` (variável `ABA_PEDIDOS`).
+Planilha usada: `xxxx` (variável `SPREADSHEET_ID`). Os pedidos vão para a aba `99 Ads Tag Request` (variável `ABA_PEDIDOS`).
 
 Abrir o `index.html` direto do disco (`file://`) ativa o **modo demonstração**, com dados só no navegador e sem login do Google.
 
