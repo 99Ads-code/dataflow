@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DataFlow · Pedidos de bases e audiências</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Barra superior (somente autenticado) -->
+  <header id="topbar" class="topbar" hidden>
+    <a class="brand" href="#/painel" aria-label="DataFlow, ir para o painel">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M3 8h10c5 0 5 8 10 8h6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M3 16h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+        <path d="M3 24h10c5 0 5-8 10-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="29" cy="16" r="2.6" fill="currentColor"/>
+      </svg>
+      <span>DataFlow</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#/painel" data-nav="painel">Painel</a>
+      <a href="#/novo" data-nav="novo">Nova solicitação</a>
+    </nav>
+    <div class="user">
+      <span class="user-name" id="user-name"></span>
+      <button class="btn btn-ghost btn-sm" id="btn-logout" type="button">Sair</button>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view auth" hidden>
+      <aside class="auth-hero">
+        <div class="hero-brand">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M3 8h10c5 0 5 8 10 8h6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <path d="M3 16h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+            <path d="M3 24h10c5 0 5-8 10-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="29" cy="16" r="2.6" fill="currentColor"/>
+          </svg>
+          <span>DataFlow</span>
+        </div>
+        <h1>Peça a audiência. Acompanhe até a entrega.</h1>
+        <p>Um só lugar para solicitar bases, segmentações e audiências e ver em que etapa cada pedido está.</p>
+        <ol class="hero-flow" aria-hidden="true">
+          <li><i style="--c:#E0A526"></i>Pendente</li>
+          <li><i style="--c:#4C9BE8"></i>Em andamento</li>
+          <li><i style="--c:#3DB37E"></i>Concluído</li>
+        </ol>
+      </aside>
+      <div class="auth-panel">
+        <div class="card auth-card">
+          <h2>Entrar</h2>
+          <p class="muted">Use a conta Google do seu navegador. Ela precisa ter acesso de edição à planilha de pedidos.</p>
+          <div class="form-error" id="login-error" role="alert" hidden></div>
+          <button class="btn btn-google btn-block" id="btn-google" type="button">
+            <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+            <span>Entrar com Google</span>
+          </button>
+          <p class="hint login-hint">Na primeira vez, o Google pede permissão para ver e editar planilhas. Seu cadastro é criado automaticamente na aba Usuarios.</p>
+        </div>
+        <p class="demo-note" id="demo-note" hidden>Modo demonstração: os dados ficam só neste navegador. Inicie o servidor (index.bat) e abra <code>http://localhost:3737</code> para usar a planilha com sua conta Google.</p>
+      </div>
+    </section>
+
+    <!-- NOVA SOLICITAÇÃO -->
+    <section id="view-novo" class="view page" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Nova solicitação</h1>
+          <p class="muted">Preencha os dados do pedido. Ele entra na planilha como pendente.</p>
+        </div>
+      </div>
+      <form id="form-pedido" class="card form-card" novalidate>
+        <div class="grid-2">
+          <div class="field">
+            <label for="ped-tipo">Tipo de solicitação</label>
+            <select id="ped-tipo" required></select>
+          </div>
+          <div class="field">
+            <label for="ped-app">App</label>
+            <select id="ped-app" required></select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="ped-anunciante">Anunciante</label>
+            <input id="ped-anunciante" type="text" maxlength="120" required placeholder="Ex.: Unilever">
+          </div>
+          <div class="field">
+            <label for="ped-campanha">Campanha</label>
+            <input id="ped-campanha" type="text" maxlength="120" required placeholder="Ex.: Cadastra">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="ped-placement">Placement</label>
+            <select id="ped-placement" required></select>
+          </div>
+          <div class="field">
+            <label for="ped-solicitante">Solicitante</label>
+            <select id="ped-solicitante" required></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="ped-descricao">Descrição</label>
+          <textarea id="ped-descricao" rows="5" maxlength="2000" required placeholder="Qual público ou base você precisa? Ex.: usuários de 99 Compras"></textarea>
+          <small class="hint"><span id="desc-count">0</span>/2000</small>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="ped-tamanho">Tamanho máximo (se aplicável)</label>
+            <input id="ped-tamanho" type="text" maxlength="80" placeholder="Deixe em branco se não houver">
+          </div>
+          <div class="field">
+            <label for="ped-prioridade">Prioridade no painel</label>
+            <select id="ped-prioridade"></select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="ped-data-solicitacao">Data da solicitação</label>
+            <input id="ped-data-solicitacao" type="text" readonly>
+          </div>
+          <div class="field">
+            <label for="ped-data-entrega">Data de entrega</label>
+            <input id="ped-data-entrega" type="date" required>
+          </div>
+        </div>
+        <div class="form-error" id="ped-error" role="alert" hidden></div>
+        <div class="form-actions">
+          <a class="btn btn-ghost" href="#/painel">Cancelar</a>
+          <button class="btn btn-primary" type="submit">Enviar solicitação</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PAINEL -->
+    <section id="view-painel" class="view page" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Painel de pedidos</h1>
+          <p class="muted" id="painel-sub">Carregando…</p>
+        </div>
+      </div>
+
+      <div class="pipeline" id="pipeline" role="group" aria-label="Pedidos por status"></div>
+
+      <div class="toolbar">
+        <div class="field grow">
+          <label for="f-busca" class="sr">Buscar</label>
+          <input id="f-busca" type="search" placeholder="Buscar anunciante, campanha ou solicitante">
+        </div>
+        <div class="field">
+          <label for="f-status" class="sr">Status</label>
+          <select id="f-status">
+            <option value="">Todos os status</option>
+            
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-prioridade" class="sr">Prioridade</label>
+          <select id="f-prioridade">
+            <option value="">Todas as prioridades</option>
+            <option>Urgente</option><option>Alta</option><option>Média</option><option>Baixa</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-ordem" class="sr">Ordenar por</label>
+          <select id="f-ordem">
+            <option value="recentes">Mais recentes</option>
+            <option value="antigos">Mais antigos</option>
+            <option value="prioridade-desc">Maior prioridade</option>
+            <option value="prioridade-asc">Menor prioridade</option>
+            <option value="status">Etapa do fluxo</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="lista" class="lista" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <!-- Detalhe do pedido -->
+  <dialog id="modal" class="modal" aria-labelledby="modal-title">
+    <div class="modal-body" id="modal-body"></div>
+  </dialog>
+
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

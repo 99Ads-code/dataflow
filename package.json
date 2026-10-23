@@ -1,0 +1,9 @@
+{
+  "name": "dataflow",
+  "version": "1.0.0",
+  "description": "Controle de pedidos de bases, segmentações e audiências com Google Sheets via service account",
+  "private": true,
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
